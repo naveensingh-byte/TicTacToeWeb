@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Styling to match Java Swing JFrame look */
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .swing-window {
+            width: 450px;
+            background-color: #f0f0f0;
+            border: 1px solid #a0a0a0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .grid-button {
+            background-color: #fdfdfd;
+            border: 1px solid #b5b5b5;
+            font-size: 50px;
+            font-weight: bold;
+            color: #000;
+            outline: none;
+            cursor: pointer;
+            user-select: none;
+        }
+        .grid-button:hover:not(:disabled) {
+            background-color: #e5e5e5;
+        }
+        .grid-button:disabled {
+            cursor: default;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="swing-window p-4">
+    <!-- Status Label (BorderLayout.NORTH) -->
+    <div id="statusLabel" class="text-center font-bold text-xl py-3 text-black">
+        Player X's Turn
+    </div>
+
+    <!-- 3x3 Grid (BorderLayout.CENTER with GridLayout 3x3) -->
+    <div class="grid grid-cols-3 gap-1 p-2 bg-[#d6d6d6] rounded border border-[#b5b5b5] h-[380px]">
+        <button class="grid-button rounded" onclick="makeMove(this, 0, 0)"></button>
+        <button class="grid-button rounded" onclick="makeMove(this, 0, 1)"></button>
+        <button class="grid-button rounded" onclick="makeMove(this, 0, 2)"></button>
+        <button class="grid-button rounded" onclick="makeMove(this, 1, 0)"></button>
+        <button class="grid-button rounded" onclick="makeMove(this, 1, 1)"></button>
+        <button class="grid-button rounded" onclick="makeMove(this, 1, 2)"></button>
+        <button class="grid-button rounded" onclick="makeMove(this, 2, 0)"></button>
+        <button class="grid-button rounded" onclick="makeMove(this, 2, 1)"></button>
+        <button class="grid-button rounded" onclick="makeMove(this, 2, 2)"></button>
+    </div>
+</div>
+
+<script>
+    let currentPlayer = 'X';
+    let board = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+    ];
+    let gameOver = false;
+
+    function makeMove(button, row, col) {
+        if (gameOver || board[row][col] !== '') return;
+
+        board[row][col] = currentPlayer;
+        button.innerText = currentPlayer;
+        button.disabled = true;
+
+        if (checkWin()) {
+            document.getElementById('statusLabel').innerText = `🎉 Player ${currentPlayer} Wins!`;
+            disableAllButtons();
+            gameOver = true;
+        } else if (isBoardFull()) {
+            document.getElementById('statusLabel').innerText = "It's a Draw!";
+            gameOver = true;
+        } else {
+            currentPlayer = (currentPlayer === 'X') ? 'O' : 'X';
+            document.getElementById('statusLabel').innerText = `Player ${currentPlayer}'s Turn`;
+        }
+    }
+
+    function checkWin() {
+        for (let i = 0; i < 3; i++) {
+            // Rows
+            if (checkThree(board[i][0], board[i][1], board[i][2])) return true;
+            // Columns
+            if (checkThree(board[0][i], board[1][i], board[2][i])) return true;
+        }
+        // Diagonals
+        if (checkThree(board[0][0], board[1][1], board[2][2])) return true;
+        if (checkThree(board[0][2], board[1][1], board[2][0])) return true;
+
+        return false;
+    }
+
+    function checkThree(b1, b2, b3) {
+        return b1 !== '' && b1 === b2 && b2 === b3;
+    }
+
+    function isBoardFull() {
+        for (let r = 0; r < 3; r++) {
+            for (let c = 0; c < 3; c++) {
+                if (board[r][c] === '') return false;
+            }
+        }
+        return true;
+    }
+
+    function disableAllButtons() {
+        const buttons = document.querySelectorAll('.grid-button');
+        buttons.forEach(btn => btn.disabled = true);
+    }
+</script>
+
+</body>
+</html>
